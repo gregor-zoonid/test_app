@@ -7,7 +7,7 @@ class Default_Controller
 	
 	public function __construct()
 	{
-		echo "Default_Controller подключен<br>\r\n";
+//		echo "Default_Controller подключен<br>\r\n";
 	}
 	
 	public function set($name, $value = NULL)

@@ -17,6 +17,8 @@ class Application
 	
 	public static $auth = FALSE;
 	
+	public static $is_auth = FALSE;
+	
 	public static $db;
 	
 	private static $_conf;
@@ -46,17 +48,18 @@ class Application
 			throw new Exception('Not found', 404);
 		}
 		
+		if ($_SESSION['auth'])
+		{
+			Application::$is_auth = TRUE;
+		}
+		
 	}
 	
 	public function run()
 	{
-		if (Application::$auth)
-		{
-			$this->auth();
-		}
-		
 		// подключаем нужный контроллер
 		$controller_class = ucfirst(Application::$route_params['controller']).'_Controller';
+		$method_name = Application::$route_params['method'];
 
 		if ( ! class_exists($controller_class))
 		{
@@ -64,7 +67,18 @@ class Application
 		}
 		
 		$controller = new $controller_class();
-		$controller->run();
+		
+		if ( ! method_exists($controller_class, $method_name))
+		{
+			throw new Exception("Method {$method_name} doesn't exist in {$controller_class} class");
+		}
+
+		$controller->$method_name();
+		
+		if ( ! Application::$is_auth AND Application::$auth AND $this->auth() )
+		{
+			Application::$is_auth = TRUE;
+		}
 		
 		// подключаем вьюшку
 		if ( ! empty($controller->template))
@@ -127,7 +141,7 @@ class Application
 		}
 		else
 		{
-			$params = array_merge($params, $route['default']);
+			$params = array_merge($route['default'], $params);
 		}
 		
 		$uri_pattern = $route['pattern'];
@@ -220,18 +234,19 @@ class Application
 	
 	private function auth()
 	{
-		if ( ! isset($_SERVER['PHP_AUTH_USER'])) {
+		if ( ! isset($_SERVER['PHP_AUTH_USER']) AND ! $_SESSION['auth']) {
 			$relam = md5(session_id()."_edit");
 			header('WWW-Authenticate: Basic realm="'.$relam.'"');
-			header('HTTP/1.0 401 Unauthorized');
+			header('HTTP/1.1 401 Unauthorized');
 			die('Вам необходимо авторизоваться перед действием');
-		} else {
+		} elseif ( ! $_SESSION['auth']) {
 			$login = $_SERVER['PHP_AUTH_USER'];
 			$pass = md5($_SERVER['PHP_AUTH_PW']);
 			if ( ! $this->login($login, $pass))
 			{
 				die('Неверная пара логин/пароль');
 			}
+			$_SESSION['auth'] = TRUE;
 		}
 		return TRUE;
 	}

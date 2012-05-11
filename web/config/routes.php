@@ -3,9 +3,7 @@ defined('ACCESS') OR die('Access denied');
 
 return array(
 	'blog'		=> array(
-			'pattern'	=>	'/(<controller>/(<id>))',
-			'regex'		=>	array(
-			),
+			'pattern'	=>	'/(<method>/(<id>))(?<params>)',
 
 			'default'	=>	array(
 				'controller'	=>	'blog',
