@@ -1,0 +1,32 @@
+# Turn on URL rewriting
+RewriteEngine On
+
+# Installation directory
+RewriteBase /
+
+# Protect hidden files from being viewed
+<Files .*>
+	Order Deny,Allow
+	Deny From All
+</Files>
+
+# Allow any files or directories that exist to be displayed directly
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Rewrite all other URLs to index.php/URL
+RewriteRule .* index.php/$0 [PT]
+
+# Disable directory listing
+Options -Indexes
+
+php_value max_execution_time 120
+php_flag register_globals off
+php_flag magic_quotes_runtime off
+php_flag magic_quotes_gpc off
+php_value upload_max_filesize 10M
+php_value post_max_size 15M 
+
+AddDefaultCharset utf8
+AddType "application/x-rar-compressed" .rar
+php_value error_reporting "E_ALL & ~E_NOTICE"
