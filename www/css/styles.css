@@ -39,3 +39,13 @@ p {
 form * {
 	display: block;
 }
+
+form textarea,
+form input {
+	margin-bottom: 5px;
+	width: 300px;
+}
+
+form textarea{
+	height: 200px;
+}

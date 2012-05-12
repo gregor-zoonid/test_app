@@ -14,13 +14,13 @@
 	<?php endif;?>
 	</div>
 	<hr>
-	<h1><?php $title?></h1>
+	<h1><?php echo $title ?></h1>
 	<hr>
 	<form method="post">
-		<input type="hidden" name="title" value="" />
-		<input type="text" name="title" value="" />
-		<textarea name="text"></textarea>
-		<input type="submit" name="save">
+		<input type="hidden" name="id" value="<?php echo $item['id'] ?>" />
+		<label for="title">Заголовок: </label><input id="title" type="text" name="title" value="<?php echo $item['title'] ?>" />
+		<label for="title">Текст:  </label><textarea id="text" name="text"><?php echo $item['text'] ?></textarea>
+		<input type="submit" name="save" value="Сохранить">
 	</form>
 </body>
 </html>
